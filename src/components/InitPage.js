@@ -1,7 +1,19 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
+import {getCurrentUser} from '@volst/react-native-tuya';
+
 
 class InitPage extends React.Component {
+
+    async componentDidMount() {
+        await getCurrentUser().then(d=>{
+            console.log(d);
+          if(d){
+            this.props.navigation.navigate('Home')
+          }
+        })
+      }
+
     render() {
         return (
             <View style={styles.body}>
@@ -33,7 +45,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     button: {
-        height: 1000,
+        height: 100,
         width: 100
     }
 });

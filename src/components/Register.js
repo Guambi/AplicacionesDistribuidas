@@ -8,7 +8,7 @@ import {
     ToastAndroid,
     ScrollView,
 } from 'react-native'
-import {getRegisterEmailValidateCode, registerAccountWithEmail} from '@volst/react-native-tuya';
+import {getRegisterEmailValidateCode, registerAccountWithEmail, createHome} from '@volst/react-native-tuya';
 
 class Register extends Component {
 
@@ -44,7 +44,7 @@ class Register extends Component {
             email: email,
             password: password,
             validateCode: code
-        }).then(() => {
+        }).then( () => {
             this.props.navigation.navigate('Home');
         }).catch(e => {
             ToastAndroid.show(e.toString(), ToastAndroid.LONG);

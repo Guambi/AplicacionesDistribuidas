@@ -14,6 +14,8 @@ import Welcome from './src/components/InitPage';
 import Login from './src/components/Login';
 import Home from './src/components/Home';
 import Register from './src/components/Register';
+import NewDevice from "./src/components/NewDevice";
+import Connecting from './src/components/Connecting';
 
 const Stack = createStackNavigator();
 
@@ -27,16 +29,24 @@ class App extends React.Component{
               component={Welcome}
             />
             <Stack.Screen
+                name="Home"
+                component={Home}
+            />
+            <Stack.Screen
               name="Login"
               component={Login}
             />
             <Stack.Screen
-              name="Home"
-              component={Home}
-            />
-            <Stack.Screen
               name="Register"
               component={Register}
+            />
+            <Stack.Screen
+              name="New Device"
+              component={NewDevice}
+            />
+            <Stack.Screen
+              name="Connecting"
+              component={Connecting}
             />
           </Stack.Navigator>
         </NavigationContainer>
