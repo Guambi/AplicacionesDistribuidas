@@ -51,7 +51,7 @@ class NewDevice extends React.Component {
             </View>
             <View style={styles.body}>
                 <Text>SSID</Text>
-                <TextInput style={styles.input} value={this.state.ssid} />
+                <TextInput style={styles.input} value={this.state.ssid} onChangeText={value => this.setState({ssid: value})}/>
                 <Text>Password</Text>
                 <TextInput style={styles.input} onChangeText={value => this.setState({password: value})} />
                 <Button title="Continuar" onPress={this.continue}/>

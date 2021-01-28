@@ -5,6 +5,7 @@ import {
     View
 } from 'react-native'
 import { initActivator } from '@volst/react-native-tuya';
+import ewelink from 'ewelink-api';
 
 class Connecting extends React.Component {
     constructor(props){
