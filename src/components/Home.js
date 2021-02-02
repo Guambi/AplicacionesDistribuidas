@@ -44,7 +44,7 @@ class Home extends React.Component {
           console.error("** An error occurred during the XMLHttpRequest");
         };
         xhr.send();
-      }) 
+      });
       let dataConverted = JSON.parse(response);
 
       if(!dataConverted.error){
@@ -53,13 +53,12 @@ class Home extends React.Component {
             devList: data.deviceList.concat(dataConverted)
           }
         )
-        // console.log(data.deviceList.concat(dataConverted));
+        console.log(data.deviceList.concat(dataConverted));
       }else{
-        this.setState(
-          {
+        this.setState({
             devList: data.deviceList
-          }
-        )
+          })
+        console.log(data.deviceList);
       }
       
     })
@@ -97,18 +96,38 @@ class Home extends React.Component {
     this.props.navigation.navigate('New Device', {homeId: this.state.home.homeId});
   }
 
-  changePower = async (devId, status) => {
-    const dps = {"1": !status};
-    // let devId = this.state.devId;
-    console.log(devId, status);
-    await send({
-      devId: devId,
-      command: dps
-    }).then(data => {
-      console.log(data);
-    }).catch(e => {
-      console.log(e.toString());
-    });
+  changePower = async (devId, status, brand) => {
+    console.log(devId, status, brand);
+    if(brand == 'tuya'){
+      const dps = {"1": !status};
+      await send({
+        devId: devId,
+        command: dps
+      }).then(data => {
+        console.log(data);
+      }).catch(e => {
+        console.log(e.toString());
+      });
+    }else if(brand == 'sonoff'){
+      if(status == 'on'){
+        status = 'off'
+      }else{
+        status = 'on'
+      }
+      let response = await new Promise(resolve => {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://node-ca.herokuapp.com/estado/'+Constant.userName+'/'+Constant.password+'/'+devId+'/'+status, true);
+        xhr.onload = function(e) {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          resolve(undefined);
+          console.error("** An error occurred during the XMLHttpRequest");
+        };
+        xhr.send();
+      });
+      console.log(response);
+    }
     this.getData();
   }
 
@@ -125,9 +144,12 @@ class Home extends React.Component {
           <Image style={styles.image} source={{uri: item.iconUrl? item.iconUrl: item.brandLogoUrl}} />
           <Text> {item.name} </Text>
           <Text>{(item.isOnline? item.isOnline: item.online)? 'Online' : 'Offline'}</Text>
-          {/* <Switch 
-          onValueChange={() => this.changePower(item.devId, item.dpCodes.switch_1)}
-          value={item.dpCodes.switch_1}/> */}
+          {item.deviceCategory != "sp" &&
+              <Switch 
+              onValueChange={() => this.changePower(item.devId? item.devId: item.deviceid, item.dpCodes? item.dpCodes.switch_1: item.params.switch,
+                item.dpCodes? 'tuya': 'sonoff')}
+              value={item.dpCodes? item.dpCodes.switch_1: item.params.switch=='on'? true: false}/>
+          }
         </View>
       </Pressable>
     );

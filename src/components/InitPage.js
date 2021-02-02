@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
 import {getCurrentUser} from '@volst/react-native-tuya';
-
+import Constant from '../contanst';
 
 class InitPage extends React.Component {
 
@@ -9,7 +9,9 @@ class InitPage extends React.Component {
         await getCurrentUser().then(d=>{
             console.log(d);
           if(d){
-            this.props.navigation.navigate('Home')
+            Constant.userName = d.email;
+            Constant.password = 'appdistribuidas',
+            this.props.navigation.navigate('Home');
           }
         })
       }
