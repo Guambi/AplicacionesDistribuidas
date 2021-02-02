@@ -9,6 +9,7 @@ import {
     ScrollView,
 } from 'react-native'
 import {getRegisterEmailValidateCode, registerAccountWithEmail, createHome} from '@volst/react-native-tuya';
+import Constant from '../contanst';
 
 class Register extends Component {
 
@@ -45,6 +46,19 @@ class Register extends Component {
             password: password,
             validateCode: code
         }).then( () => {
+            Constant.userName = email;
+            Constant.password = password;
+            createHome({
+                name: 'Casa',
+                lon: 0,
+                lat: 0,
+                geoName: "Ecuador",
+                rooms: []
+            }).then(bean => {
+                console.log(bean);
+            }).catch(error => {
+                console.log(error);
+            });
             this.props.navigation.navigate('Home');
         }).catch(e => {
             ToastAndroid.show(e.toString(), ToastAndroid.LONG);

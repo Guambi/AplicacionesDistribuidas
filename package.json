@@ -16,6 +16,7 @@
     "@react-navigation/stack": "^5.13.0",
     "@volst/react-native-tuya": "^0.3.2",
     "ewelink-api": "^3.1.1",
+    "file-system": "^2.2.2",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-gesture-handler": "^1.9.0",

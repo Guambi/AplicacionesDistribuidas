@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import { StyleSheet, Text, View, Button, FlatList, Image, Pressable, Switch} from 'react-native';
 import { queryHomeList, getHomeDetail, createHome, logout, send } from '@volst/react-native-tuya';
+import Constant from '../contanst';
+
+
 
 class Home extends React.Component {
   constructor(props) {
@@ -26,13 +29,39 @@ class Home extends React.Component {
   }
 
   getHomeDetail() {
-    getHomeDetail({ homeId: this.state.home.homeId }).then(data => {
-      console.log(data.deviceList);
-      this.setState(
-        {
-          devList: data.deviceList
-        }
-      )
+    getHomeDetail({ homeId: this.state.home.homeId }).then(async data => {
+    
+      console.log(Constant.userName)
+      let response = await new Promise(resolve => {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://node-ca.herokuapp.com/dispositivos/'+Constant.userName+'/'+Constant.password, true);
+        // xhr.open("GET", 'https://node-ca.herokuapp.com/dispositivos/appdistribuidas2020@gmail.com/appdistribuidas', true);
+        xhr.onload = function(e) {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function () {
+          resolve(undefined);
+          console.error("** An error occurred during the XMLHttpRequest");
+        };
+        xhr.send();
+      }) 
+      let dataConverted = JSON.parse(response);
+
+      if(!dataConverted.error){
+        this.setState(
+          {
+            devList: data.deviceList.concat(dataConverted)
+          }
+        )
+        // console.log(data.deviceList.concat(dataConverted));
+      }else{
+        this.setState(
+          {
+            devList: data.deviceList
+          }
+        )
+      }
+      
     })
   }
 
@@ -68,9 +97,10 @@ class Home extends React.Component {
     this.props.navigation.navigate('New Device', {homeId: this.state.home.homeId});
   }
 
-  changePower = async () => {
-    const dps = {"1": false};
-    let devId = this.state.devId;
+  changePower = async (devId, status) => {
+    const dps = {"1": !status};
+    // let devId = this.state.devId;
+    console.log(devId, status);
     await send({
       devId: devId,
       command: dps
@@ -79,9 +109,7 @@ class Home extends React.Component {
     }).catch(e => {
       console.log(e.toString());
     });
-    this.setState({
-      status: !this.state.status
-    });
+    this.getData();
   }
 
   render() {
@@ -94,12 +122,12 @@ class Home extends React.Component {
         },]}
         >
         <View style={styles.itemContainer}>
-          <Image style={styles.image} source={{uri: item.iconUrl}} />
+          <Image style={styles.image} source={{uri: item.iconUrl? item.iconUrl: item.brandLogoUrl}} />
           <Text> {item.name} </Text>
-          <Text>{item.isOnline? 'Online' : 'Offline'}</Text>
-          <Switch 
-          onValueChange={this.changePower}
-          value={item.dpCodes.switch_1}/>
+          <Text>{(item.isOnline? item.isOnline: item.online)? 'Online' : 'Offline'}</Text>
+          {/* <Switch 
+          onValueChange={() => this.changePower(item.devId, item.dpCodes.switch_1)}
+          value={item.dpCodes.switch_1}/> */}
         </View>
       </Pressable>
     );
@@ -109,7 +137,7 @@ class Home extends React.Component {
         <FlatList 
         data={this.state.devList}
         renderItem={renderItem}
-        keyExtractor={item => item.devId}
+        keyExtractor={item => item.devId? item.devId: item.deviceid}
         />
         {/* <View style={styles.bar}> */}
         <Button title="Inicio" onPress={this.home} />

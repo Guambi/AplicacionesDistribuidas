@@ -9,6 +9,7 @@ import {
     ScrollView,
 } from 'react-native'
 import {loginWithEmail} from '@volst/react-native-tuya';
+import Constant from '../contanst';
 
 
 class Login extends React.Component {
@@ -30,6 +31,8 @@ class Login extends React.Component {
             email: email,
             password: password
         }).then(() => {
+            Constant.userName = email;
+            Constant.password = password;
             this.props.navigation.navigate('Home');
         }).catch(e => {
             ToastAndroid.show(e.toString(), ToastAndroid.LONG);
